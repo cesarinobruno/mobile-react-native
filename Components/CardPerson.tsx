@@ -3,10 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { BASE_URL } from '../services/axios';
 
-
+const perPage = 7;
 
 export const CardPerson = () => {
-    const perPage = 6;
 
     const [persons, setPersons] = useState<any>({
         data: [],
@@ -22,9 +21,7 @@ export const CardPerson = () => {
         setPersons({ loading: true });
 
         axios.get(`${BASE_URL}api/users?page=${page}&size=${perPage}`).then((response) => {
-            console.log('response', response.data);
             setPersons({ data: [...persons.data, ...response.data], loading: false, page: page + 1 });
-
         }).catch((err) => console.error(err));
     }
 
@@ -37,7 +34,7 @@ export const CardPerson = () => {
     }
 
     const renderFooter = () => {
-        if (!persons.loading) return;
+        if (!persons.loading) return null;
         return (
             <ActivityIndicator />
         )
@@ -53,7 +50,7 @@ export const CardPerson = () => {
             style={{ marginTop: 20 }}
             data={persons.data}
             renderItem={(data) => cardItem(data)}
-            keyExtractor={(data) => data.id.toString()}
+            keyExtractor={(data, index) => 'key'+index}
             onEndReached={setup}
             onEndReachedThreshold={0.1}
             ListFooterComponent={renderFooter}
